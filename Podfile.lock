@@ -1,0 +1,18 @@
+PODS:
+  - CropViewController (2.3.6)
+  - Kanna (4.0.0)
+  - TesseractOCRiOS (4.0.0)
+
+DEPENDENCIES:
+  - CropViewController
+  - Kanna (~> 4.0.0)
+  - TesseractOCRiOS (= 4.0.0)
+
+SPEC CHECKSUMS:
+  CropViewController: e6d4bd512d15a1709e9ddf71fe7d98ffd05dda0f
+  Kanna: d5ae2a26472f7e7a474e7f36a9cd8aa2c8c63ad3
+  TesseractOCRiOS: 90638afbe43d082433f2e76b384c7901d23956df
+
+PODFILE CHECKSUM: 3c44ed3b46be7065b28ccc5bb9dd4684fb10473d
+
+COCOAPODS: 1.4.0
