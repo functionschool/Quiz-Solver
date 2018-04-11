@@ -11,8 +11,9 @@ import CoreImage
 import TesseractOCR
 import MobileCoreServices
 import Kanna
+import CropViewController
 
-class ViewController: UIViewController, G8TesseractDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ViewController: UIViewController, G8TesseractDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
@@ -47,6 +48,23 @@ class ViewController: UIViewController, G8TesseractDelegate, UIImagePickerContro
     
     @IBAction func addFilter(_ sender: Any) {
         imageView.image = editImage(image: imageView.image!)
+    }
+    
+    @IBAction func cropButtonPressed(_ sender: Any) {
+        presentCropViewController()
+    }
+    
+    
+    func presentCropViewController() {
+        let image: UIImage = imageView.image!
+        let cropViewController = CropViewController(image: image)
+        cropViewController.delegate = self
+        present(cropViewController, animated: true, completion: nil)
+    }
+    
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+        imageView.image = image
+        self.dismiss(animated: true, completion: nil)
     }
     
     func extractText() -> String {
