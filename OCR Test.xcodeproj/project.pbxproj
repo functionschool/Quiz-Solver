@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A509E64F2089E681002AC23D /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509E64E2089E681002AC23D /* UIImageExtension.swift */; };
+		A509E6512089E8B5002AC23D /* ResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509E6502089E8B5002AC23D /* ResultsVC.swift */; };
 		A52BB9EE206B689E002E0955 /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = A52BB9ED206B689E002E0955 /* tessdata */; };
-		A54096EB2089DB69001E4E07 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54096EA2089DB69001E4E07 /* UIImageExtension.swift */; };
 		A5C5420E206B626C00742DD7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C5420D206B626C00742DD7 /* AppDelegate.swift */; };
-		A5C54210206B626C00742DD7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C5420F206B626C00742DD7 /* ViewController.swift */; };
+		A5C54210206B626C00742DD7 /* PictureVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C5420F206B626C00742DD7 /* PictureVC.swift */; };
 		A5C54213206B626C00742DD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5C54211206B626C00742DD7 /* Main.storyboard */; };
 		A5C54215206B626C00742DD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5C54214206B626C00742DD7 /* Assets.xcassets */; };
 		A5C54218206B626C00742DD7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5C54216206B626C00742DD7 /* LaunchScreen.storyboard */; };
@@ -20,11 +21,12 @@
 /* Begin PBXFileReference section */
 		44A27C042EC3C01BEDE9EAF9 /* Pods_OCR_Test.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCR_Test.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		572EB9914F5061AAEA426F92 /* Pods-OCR Test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCR Test.release.xcconfig"; path = "Pods/Target Support Files/Pods-OCR Test/Pods-OCR Test.release.xcconfig"; sourceTree = "<group>"; };
+		A509E64E2089E681002AC23D /* UIImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
+		A509E6502089E8B5002AC23D /* ResultsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsVC.swift; sourceTree = "<group>"; };
 		A52BB9ED206B689E002E0955 /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tessdata; sourceTree = "<group>"; };
-		A54096EA2089DB69001E4E07 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		A5C5420A206B626C00742DD7 /* OCR Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OCR Test.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5C5420D206B626C00742DD7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A5C5420F206B626C00742DD7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A5C5420F206B626C00742DD7 /* PictureVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureVC.swift; sourceTree = "<group>"; };
 		A5C54212206B626C00742DD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A5C54214206B626C00742DD7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A5C54217206B626C00742DD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -74,8 +76,9 @@
 			isa = PBXGroup;
 			children = (
 				A5C5420D206B626C00742DD7 /* AppDelegate.swift */,
-				A5C5420F206B626C00742DD7 /* ViewController.swift */,
-				A54096EA2089DB69001E4E07 /* UIImageExtension.swift */,
+				A5C5420F206B626C00742DD7 /* PictureVC.swift */,
+				A509E6502089E8B5002AC23D /* ResultsVC.swift */,
+				A509E64E2089E681002AC23D /* UIImageExtension.swift */,
 				A5C54211206B626C00742DD7 /* Main.storyboard */,
 				A5C54214206B626C00742DD7 /* Assets.xcassets */,
 				A52BB9ED206B689E002E0955 /* tessdata */,
@@ -228,9 +231,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5C54210206B626C00742DD7 /* ViewController.swift in Sources */,
+				A5C54210206B626C00742DD7 /* PictureVC.swift in Sources */,
 				A5C5420E206B626C00742DD7 /* AppDelegate.swift in Sources */,
-				A54096EB2089DB69001E4E07 /* UIImageExtension.swift in Sources */,
+				A509E64F2089E681002AC23D /* UIImageExtension.swift in Sources */,
+				A509E6512089E8B5002AC23D /* ResultsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +378,7 @@
 				DEVELOPMENT_TEAM = SA9EY248Y9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "OCR Test/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Kousei-Richeson.OCR-Test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -391,6 +396,7 @@
 				DEVELOPMENT_TEAM = SA9EY248Y9;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "OCR Test/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Kousei-Richeson.OCR-Test";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,21 +1,19 @@
 //
-//  ViewController.swift
+//  PictureViewController.swift
 //  OCR Test
 //
 //  Created by Kousei Richeson on 3/27/18.
 //  Copyright © 2018 Kousei Richeson. All rights reserved.
 //
 
-
 import CoreImage
 import CropViewController
-import Kanna
 import MobileCoreServices
 import TesseractOCR
 import UIKit
 
 
-class ViewController: UIViewController {
+class PictureVC: UIViewController {
     
 
     // --------------------------------------------------------------
@@ -25,7 +23,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
 
     
-    
     // --------------------------------------------------------------
     // MARK:- Variables
     // --------------------------------------------------------------
@@ -33,7 +30,6 @@ class ViewController: UIViewController {
     var currentFilter: CIFilter!
     var imagePicker: UIImagePickerController!
     var recText = "Error"
-    
     
     
     // --------------------------------------------------------------
@@ -45,12 +41,21 @@ class ViewController: UIViewController {
         imagePicker.delegate = self
         imageView.image = imageView.image?.fixOrientation()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         print("Recieved a memory warning")
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "PicturePath" {
+            if let destination = segue.destination as? ResultsVC {
+                if let text = sender as? String {
+                    destination.question = text
+                }
+            }
+        }
+    }
     
     
     // --------------------------------------------------------------
@@ -60,8 +65,16 @@ class ViewController: UIViewController {
         imageView.image = applyCINoiseReduction(image: imageView.image!)
     }
     
-    @IBAction func buttonPressed(_ sender: Any) {
+    @IBAction func cameraButtonPressed(_ sender: Any) {
         showCamera()
+    }
+    
+    @IBAction func cropButtonPressed(_ sender: Any) {
+        presentCropViewController()
+    }
+    
+    @IBAction func goButtonPressed(_ sender: Any) {
+        performSegue(withIdentifier: "PicturePath", sender: textView.text)
     }
     
     @IBAction func readButtonPressed(_ sender: Any) {
@@ -69,55 +82,21 @@ class ViewController: UIViewController {
         textView.text = recText
     }
     
-    @IBAction func cropButtonPressed(_ sender: Any) {
-        presentCropViewController()
-    }
     
-    
-    
-    // --------------------------------------------------------------
-    // MARK:- Functions
-    // --------------------------------------------------------------
-    
-    func destroyWeirdLetters(text: String) -> String {
-        // Change weird space characters normal space character
-        var result = text.replacingOccurrences(of: " ", with: " ")
-        let okayChars = Set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890–+-=().,!_")
-        result = result.filter { okayChars.contains($0) }
-        result = result.trimmingCharacters(in: .whitespacesAndNewlines)
-        return result
-    }
-    
-    func answerFormatter(text: String) -> String {
-        var result = text
-        // result = result.lowercased()
-        result = result.replacingOccurrences(of: " the ", with: " ")
-        result = result.replacingOccurrences(of: " of ", with: " ")
-        result = result.replacingOccurrences(of: " a ", with: " ")
-        result = result.replacingOccurrences(of: " an ", with: " ")
-        result = result.replacingOccurrences(of: " and ", with: " ")
-        result = result.replacingOccurrences(of: " in ", with: " ")
-        result = result.replacingOccurrences(of: "'s", with: "s")
-        return result
-    }
-
 }
 
 
 
-
-
-
 // --------------------------------------------------------------
-// MARK:- Camera Extension
+// MARK:- Camera Functions
 // --------------------------------------------------------------
-extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension PictureVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         self.dismiss(animated: true, completion: nil)
         if let img = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            // let fixedImage = img.fixedOrientation
-            imageView.image = img //fixedImage()
+            let fixedImage = img.fixOrientation
+            imageView.image = fixedImage()
         }
     }
     
@@ -145,12 +124,16 @@ extension ViewController: UIImagePickerControllerDelegate, UINavigationControlle
 }
 
 
-
 // --------------------------------------------------------------
-// MARK:- Crop VC Extension
+// MARK:- Crop VC Functions
 // --------------------------------------------------------------
-extension ViewController: CropViewControllerDelegate {
+extension PictureVC: CropViewControllerDelegate {
 
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+        imageView.image = image
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func presentCropViewController() {
         let image: UIImage = imageView.image!
         let cropViewController = CropViewController(image: image)
@@ -158,18 +141,13 @@ extension ViewController: CropViewControllerDelegate {
         present(cropViewController, animated: true, completion: nil)
     }
     
-    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        imageView.image = image
-        self.dismiss(animated: true, completion: nil)
-    }
-    
 }
 
 
 // --------------------------------------------------------------
-// MARK:- Image Editing Extension
+// MARK:- Image Editing Functions
 // --------------------------------------------------------------
-extension ViewController {
+extension PictureVC {
     
     func applyCINoiseReduction(image: UIImage) -> UIImage {
         var img1: CIImage = CIImage(image: image)!
@@ -193,13 +171,42 @@ extension ViewController {
     }
     
 }
+
+
+// --------------------------------------------------------------
+// MARK:- Other Functions
+// --------------------------------------------------------------
+extension PictureVC {
     
+    func answerFormatter(text: String) -> String {
+        var result = text
+        // result = result.lowercased()
+        result = result.replacingOccurrences(of: " the ", with: " ")
+        result = result.replacingOccurrences(of: " of ", with: " ")
+        result = result.replacingOccurrences(of: " a ", with: " ")
+        result = result.replacingOccurrences(of: " an ", with: " ")
+        result = result.replacingOccurrences(of: " and ", with: " ")
+        result = result.replacingOccurrences(of: " in ", with: " ")
+        result = result.replacingOccurrences(of: "'s", with: "s")
+        return result
+    }
+    
+    func destroyWeirdLetters(text: String) -> String {
+        // Change weird space characters normal space character
+        var result = text.replacingOccurrences(of: " ", with: " ")
+        let okayChars = Set("abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLKMNOPQRSTUVWXYZ1234567890–+-=().,!_")
+        result = result.filter { okayChars.contains($0) }
+        result = result.trimmingCharacters(in: .whitespacesAndNewlines)
+        return result
+    }
+    
+}
 
 
 // --------------------------------------------------------------
-// MARK:- Tesseract Extension
+// MARK:- Tesseract Functions
 // --------------------------------------------------------------
-extension ViewController: G8TesseractDelegate {
+extension PictureVC: G8TesseractDelegate {
 
     func extractText() -> String {
         var picture = imageView.image

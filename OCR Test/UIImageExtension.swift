@@ -6,7 +6,6 @@
 //  Copyright © 2018 Kousei Richeson. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 extension UIImage {
