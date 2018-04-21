@@ -29,7 +29,7 @@ class PictureVC: UIViewController {
     var context: CIContext!
     var currentFilter: CIFilter!
     var imagePicker: UIImagePickerController!
-    var recText = "Error"
+    var recText: String = "Error"
     
     
     // --------------------------------------------------------------

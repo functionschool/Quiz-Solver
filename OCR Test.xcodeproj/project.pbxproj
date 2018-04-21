@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A506F32B208AB1A500D62BBB /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A506F32A208AB1A500D62BBB /* StringExtension.swift */; };
 		A509E64F2089E681002AC23D /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509E64E2089E681002AC23D /* UIImageExtension.swift */; };
 		A509E6512089E8B5002AC23D /* ResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509E6502089E8B5002AC23D /* ResultsVC.swift */; };
 		A52BB9EE206B689E002E0955 /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = A52BB9ED206B689E002E0955 /* tessdata */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		44A27C042EC3C01BEDE9EAF9 /* Pods_OCR_Test.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OCR_Test.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		572EB9914F5061AAEA426F92 /* Pods-OCR Test.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCR Test.release.xcconfig"; path = "Pods/Target Support Files/Pods-OCR Test/Pods-OCR Test.release.xcconfig"; sourceTree = "<group>"; };
+		A506F32A208AB1A500D62BBB /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		A509E64E2089E681002AC23D /* UIImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		A509E6502089E8B5002AC23D /* ResultsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsVC.swift; sourceTree = "<group>"; };
 		A52BB9ED206B689E002E0955 /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tessdata; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				A5C5420D206B626C00742DD7 /* AppDelegate.swift */,
 				A5C5420F206B626C00742DD7 /* PictureVC.swift */,
 				A509E6502089E8B5002AC23D /* ResultsVC.swift */,
+				A506F32A208AB1A500D62BBB /* StringExtension.swift */,
 				A509E64E2089E681002AC23D /* UIImageExtension.swift */,
 				A5C54211206B626C00742DD7 /* Main.storyboard */,
 				A5C54214206B626C00742DD7 /* Assets.xcassets */,
@@ -233,6 +236,7 @@
 			files = (
 				A5C54210206B626C00742DD7 /* PictureVC.swift in Sources */,
 				A5C5420E206B626C00742DD7 /* AppDelegate.swift in Sources */,
+				A506F32B208AB1A500D62BBB /* StringExtension.swift in Sources */,
 				A509E64F2089E681002AC23D /* UIImageExtension.swift in Sources */,
 				A509E6512089E8B5002AC23D /* ResultsVC.swift in Sources */,
 			);
