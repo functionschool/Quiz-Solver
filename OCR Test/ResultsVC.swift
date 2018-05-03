@@ -39,9 +39,25 @@ class ResultsVC: UIViewController {
             print("Using default Question")
             // question = "the main suite of protocols used on the internet is ________."
             question = "what does API stand for"
+            // question = "Who was the first president"
+            // question = "a ________ is person who reports a business that is engaged in an illegal activity or an unethical act to a regulatory agency."
         }
         
         questionLabel.text = question
+        
+//        html = definitiveSearch(question: question!)
+//        if(html == nil) {
+//            print("Cannot Continue")
+//            return
+//        }
+//        let yoTest = extractDefiniteAnswer(html: html!)
+//        print(yoTest)
+//        if(yoTest == nil) {
+//            print("Poop")
+//        } else {
+//            return
+//        }
+        
         html = googleSearch(question: question!)
         
         if(html == nil) {
@@ -76,16 +92,32 @@ class ResultsVC: UIViewController {
             print(searchQueries[i])
         }
         
-        html = quizletSearch(searchFor: searchQueries[0], url: urlList[0])
+        let searchQueryScores = scoreSearchQueries(queries: searchQueries)
         
-        if(html == nil) {
-            print("Cannot Continue")
-            return
+        print()
+        for i in stride(from: 0, to: searchQueryScores.count, by: 1) {
+            print(i, terminator:". ")
+            print(searchQueryScores[i])
         }
         
-        let potentialAnswer = extractAnswer(html: html!, searchFor: searchQueries[0])
-        print(potentialAnswer ?? "Nil")
+        var answerArray = [String]()
         
+        for i in stride(from: 0, to: searchQueries.count, by: 1) {
+            html = quizletSearch(searchFor: searchQueries[i], url: urlList[i])
+            if(html == nil) {
+                print("Cannot Continue")
+                return
+            }
+            let potentialAnswer = extractAnswer(html: html!, searchFor: searchQueries[i])
+            answerArray.append(potentialAnswer ?? "nil")
+        }
+        
+        print()
+        print(answerArray)
+        
+        print()
+        print(answerArray)
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -147,6 +179,53 @@ class ResultsVC: UIViewController {
         return array
     }
     
+    func scoreSearchQueries(queries: [String?]) -> [Double] {
+        let questionWordCount = Double((question?.split(separator: " ").count)!)
+        var queryScores = [Double]()
+        for i in stride(from: 0, to: queries.count, by: 1) {
+            let queryWordCount = Double((queries[i]?.split(separator: " ").count)!)
+            if(queries[i] == nil) {
+                queryScores.append(0.0)
+            } else if(questionWordCount < queryWordCount) {
+                queryScores.append(100.0)
+            } else {
+                var score = 100.0
+                let fraction = queryWordCount / questionWordCount
+                score = score * fraction
+                queryScores.append(score)
+            }
+        }
+        return queryScores
+    }
+    
+//    func definitiveSearch(question: String) -> String? {
+//        let questionFormatted = (question).replacingOccurrences(of: " ", with: "+")
+//        let questionURL = "https://www.google.com/search?q=\(questionFormatted)"
+//        print("Attempting to fetch from: " + questionURL)
+//        guard let URL = URL(string: questionURL) else {
+//            print("Error: \(questionURL) doesn't seem to be a valid URL")
+//            return nil
+//        }
+//        do {
+//            let myHTMLString = try String(contentsOf: URL, encoding: .ascii)
+//            return myHTMLString
+//        } catch let error {
+//            print("Error: \(error)")
+//            return nil
+//        }
+//    }
+//
+//    func extractDefiniteAnswer(html: String) -> String? {
+//        if let doc = try? HTML(html: html, encoding: .utf8) {
+//            let xPath = "//div[@class='Z0LcW']/cite"
+//            for item in doc.xpath(xPath) {
+//                print("Noice")
+//                return item.toHTML
+//            }
+//        }
+//        return nil
+//    }
+    
     func prioritizeList(urls: [String], bolds: [[String]]) -> ([String], [[String]]) {
         var urlList = urls
         var boldList = bolds
@@ -156,9 +235,9 @@ class ResultsVC: UIViewController {
             var score: Float = 0.0
             for j in stride(from: 0, to: boldList[i].count, by: 1) {
                 let result = boldList[i][j]
-                let resultWordCount = result.split(separator: " ").count
-                if(score < Float(resultWordCount)) {
-                    score = Float(resultWordCount)
+                let resultWords = result.components(separatedBy: " ")
+                if(score < Float(resultWords.count)) {
+                    score = Float(resultWords.count)
                 }
             }
             score = score + Float(boldList[i].count-1) * 0.1
@@ -256,10 +335,11 @@ class ResultsVC: UIViewController {
         var boldList = bolds
         
         for i in stride(from: 0, to: urlLinks.count, by: 1) {
-            if (urlLinks[i].range(of: "...") != nil) {
+            if (urlLinks[i].range(of: "quizlet.com/") == nil) {
                 removeTheseIndexes.append(i)
             }
-            if (urlLinks[i].range(of: "quizlet.com/") == nil) {
+            else if (urlLinks[i].range(of: "...") != nil) {
+                print("Removed a result due to ... error")
                 removeTheseIndexes.append(i)
             }
         }
