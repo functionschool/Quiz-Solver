@@ -16,6 +16,12 @@ class ResultsVC: UIViewController {
     // MARK:- Outlets
     // --------------------------------------------------------------
     @IBOutlet weak var questionLabel: UILabel!
+    @IBOutlet weak var answerTitle1: UILabel!
+    @IBOutlet weak var answerTitle2: UILabel!
+    @IBOutlet weak var answerTitle3: UILabel!
+    @IBOutlet weak var answer1: UILabel!
+    @IBOutlet weak var answer2: UILabel!
+    @IBOutlet weak var answer3: UILabel!
     
     
     // --------------------------------------------------------------
@@ -30,40 +36,80 @@ class ResultsVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var boldedQuery: [[String]] = []
-        var urlList: [String] = []
-        var html: String?
-        
+        answerTitle1.isHidden = true
+        answerTitle2.isHidden = true
+        answerTitle3.isHidden = true
+        answer1.isHidden = true
+        answer2.isHidden = true
+        answer3.isHidden = true
         
         if(question == nil) {
             print("Using default Question")
-            // question = "the main suite of protocols used on the internet is ________."
+            question = "the main suite of protocols used on the internet is ________."
             // question = "what does API stand for"
             // question = "Who was the first president"
             // question = "a ________ is person who reports a business that is engaged in an illegal activity or an unethical act to a regulatory agency."
-            question = "The United States has one of the highest rate of software piracy"
+            // question = "is the theory that hold that actions that generate grweater happiness are judged to be better than actions that lead to unhappiness"
         }
         
         questionLabel.text = question
         
-//        html = definitiveSearch(question: question!)
-//        if(html == nil) {
-//            print("Cannot Continue")
-//            return
-//        }
-//        let yoTest = extractDefiniteAnswer(html: html!)
-//        print(yoTest)
-//        if(yoTest == nil) {
-//            print("Poop")
-//        } else {
-//            return
-//        }
+        DispatchQueue.global(qos: .background).async {
+            
+            print("This is run on the background queue")
+            var topAnswers = [String]()
+            var percentages = [Double]()
+            let solvedTuple = self.solve()
+            topAnswers = solvedTuple.0
+            percentages = solvedTuple.1
+            
+            DispatchQueue.main.async {
+                print("This is run on the main queue, after the previous code in outer block")
+                if(topAnswers.count >= 1) {
+                    self.answerTitle1.isHidden = false
+                    self.answer1.isHidden = false
+                    self.answer1.text = topAnswers[0]
+                }
+                if(topAnswers.count >= 2) {
+                    self.answerTitle2.isHidden = false
+                    self.answer2.isHidden = false
+                    self.answer2.text = topAnswers[1]
+                }
+                if(topAnswers.count >= 3) {
+                    self.answerTitle3.isHidden = false
+                    self.answer3.isHidden = false
+                    self.answer3.text = topAnswers[2]
+                }
+                if(topAnswers.count == 0) {
+                    //do nothing
+                }
+            }
+        }
+        
+        
+
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        print("Recieved a memory warning")
+    }
+    
+    
+    // --------------------------------------------------------------
+    // MARK:- Functions
+    // --------------------------------------------------------------
+    func solve() -> ([String], [Double]) {
+        
+        var boldedQuery: [[String]] = []
+        var urlList: [String] = []
+        var html: String?
         
         html = googleSearch(question: question!)
         
         if(html == nil) {
             print("Cannot Continue")
-            return
+            return ([], [])
         }
         
         urlList = extractLinks(html: html!)
@@ -107,7 +153,7 @@ class ResultsVC: UIViewController {
             html = quizletSearch(searchFor: searchQueries[i], url: urlList[i])
             if(html == nil) {
                 print("Cannot Continue")
-                return
+                return ([], [])
             }
             let potentialAnswer = extractAnswer(html: html!, searchFor: searchQueries[i])
             answerArray.append(potentialAnswer)
@@ -127,18 +173,19 @@ class ResultsVC: UIViewController {
         print("Percentages:")
         print(answerScores)
         
+        return (topThreeAnswers, answerScores)
+    }
+    
+    
+    
+    
+    
+    
 
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        print("Recieved a memory warning")
-    }
     
     
-    // --------------------------------------------------------------
-    // MARK:- Functions
-    // --------------------------------------------------------------
+    
+    
     func googleSearch(question: String) -> String? {
         let questionFormatted = (question + " quizlet").replacingOccurrences(of: " ", with: "+")
         let questionURL = "https://www.google.com/search?q=\(questionFormatted)"
@@ -173,60 +220,47 @@ class ResultsVC: UIViewController {
     
     func scoreAnswers(answers: [String?], searchCoverage: [Double]) -> ([String], [Double]) {
         
+        if(searchCoverage.count == 0) {
+            return ([],[])
+        }
+        
         var topThreeAnswers = [String]()
-        var scores = [Double]()
+        var topThreeScores = [Double]()
+        var allAnswers = [String]()
+        var allScores = [Double]()
+        let percentCorrect = 97.5 * searchCoverage.max()!/100
         
         for i in stride(from: 0, to: answers.count, by: 1) {
-            let score = 97.5 * searchCoverage[i]/100
             if(answers[i] == nil) {
                 // do nothing
             }
-            else if(topThreeAnswers.count >= 1 && topThreeAnswers[0].lowercased() == answers[i]!.lowercased()) {
-                scores[0] = scores[0] + ((100 - scores[0]) * (score/100))
-            }
-            else if(topThreeAnswers.count >= 2 && topThreeAnswers[1].lowercased() == answers[i]!.lowercased()) {
-                scores[1] = scores[1] + ((100 - scores[1]) * (score/100))
-            }
-            else if(topThreeAnswers.count >= 3 && topThreeAnswers[2].lowercased() == answers[i]!.lowercased()) {
-                scores[2] = scores[2] + ((100 - scores[2]) * (score/100))
-            }
-            else if(scores.count < 3) {
-                scores.append(score)
-                topThreeAnswers.append(answers[i]!)
-            }
-            else if(score > scores.min()!) {
-                for i in stride(from: 0, to: scores.count, by: 1) {
-                    if (scores[i] == scores.min()) {
-                        scores[i] = score
-                        topThreeAnswers[i] = answers[i]!
+            else {
+                var foundOld = false
+                for j in stride(from: 0, to: allAnswers.count, by: 1) {
+                    if(allAnswers[j].lowercased() == answers[i]!.lowercased()) {
+                        print("Found a same answer")
+                        allScores[j] = allScores[j] + searchCoverage[i]
+                        foundOld = true
                         break
                     }
+                }
+                if(foundOld == false) {
+                    allAnswers.append(answers[i]!)
+                    allScores.append(searchCoverage[i])
                 }
             }
         }
         
-        print(scores.max()!)
+        let mergeSortTuple = mergeSort(allScores, allAnswers)
+        topThreeScores = Array(mergeSortTuple.0.prefix(3))
+        topThreeAnswers = Array(mergeSortTuple.1.prefix(3))
         
-        if(scores.count >= 1) {
-            let percentageAllowed = scores.max()!
-            let sum = scores.reduce(0, +)
-            let score0 = scores[0] / sum
-            scores[0] = score0 * (percentageAllowed)
-            if(scores.count >= 2) {
-                let score1 = scores[1] / sum
-                scores[1] = score1 * (percentageAllowed)
-            }
-            if(scores.count >= 3) {
-                let score2 = scores[2] / sum
-                scores[2] = score2 * (percentageAllowed)
-            }
-        }
+        let sum = topThreeScores.reduce(0, +)
+        topThreeScores[0] = topThreeScores[0]/sum * percentCorrect
+        topThreeScores[1] = topThreeScores[1]/sum * percentCorrect
+        topThreeScores[2] = topThreeScores[2]/sum * percentCorrect
         
-        if(scores.count > 3 || topThreeAnswers.count > 3) {
-            print("Did something wrong. Array is longer than 3.")
-        }
-        
-        return (topThreeAnswers, scores)
+        return (topThreeAnswers, topThreeScores)
     }
     
     func matrixToArray(matrix: [[String]]) -> [String] {
@@ -266,34 +300,6 @@ class ResultsVC: UIViewController {
         return queryScores
     }
     
-//    func definitiveSearch(question: String) -> String? {
-//        let questionFormatted = (question).replacingOccurrences(of: " ", with: "+")
-//        let questionURL = "https://www.google.com/search?q=\(questionFormatted)"
-//        print("Attempting to fetch from: " + questionURL)
-//        guard let URL = URL(string: questionURL) else {
-//            print("Error: \(questionURL) doesn't seem to be a valid URL")
-//            return nil
-//        }
-//        do {
-//            let myHTMLString = try String(contentsOf: URL, encoding: .ascii)
-//            return myHTMLString
-//        } catch let error {
-//            print("Error: \(error)")
-//            return nil
-//        }
-//    }
-//
-//    func extractDefiniteAnswer(html: String) -> String? {
-//        if let doc = try? HTML(html: html, encoding: .utf8) {
-//            let xPath = "//div[@class='Z0LcW']/cite"
-//            for item in doc.xpath(xPath) {
-//                print("Noice")
-//                return item.toHTML
-//            }
-//        }
-//        return nil
-//    }
-    
     func prioritizeList(urls: [String], bolds: [[String]]) -> ([String], [[String]]) {
         var urlList = urls
         var boldList = bolds
@@ -319,7 +325,83 @@ class ResultsVC: UIViewController {
         return (urlList, boldList)
     }
     
+    func mergeSort(_ scoreArray: [Double], _ answerArray: [String]) -> ([Double], [String]) {
+        
+        if(scoreArray.count != answerArray.count) {
+            print("Error in MergeSort")
+            return (scoreArray, answerArray)
+        }
+        
+        // Base Case: If array has more than 1 element, continue.
+        guard scoreArray.count > 1 else { return (scoreArray, answerArray) }
+        
+        let middleIndex = scoreArray.count / 2
+        
+        let leftTuple = mergeSort(Array(scoreArray[0..<middleIndex]), Array(answerArray[0..<middleIndex]))
+        let rightTuple = mergeSort(Array(scoreArray[middleIndex..<scoreArray.count]), Array(answerArray[middleIndex..<answerArray.count]))
+        
+        let leftScoreArray = leftTuple.0
+        let rightScoreArray = rightTuple.0
+        
+        let leftAnswerArray = leftTuple.1
+        let rightAnswerArray = rightTuple.1
+        
+        // Recursive call.
+        return merge(leftScoreArray, rightScoreArray, leftAnswerArray, rightAnswerArray)
+    }
+    
+    func merge(_ leftScoreArray: [Double], _ rightScoreArray: [Double], _ leftAnswerArray: [String], _ rightAnswerArray: [String]) -> ([Double], [String]) {
+        var leftIndex = 0
+        var rightIndex = 0
+        var orderedScoreArray: [Double] = []
+        var orderedAnswerArray: [String] = []
+        
+        while leftIndex < leftScoreArray.count && rightIndex < rightScoreArray.count {
+            let leftScoreElement = leftScoreArray[leftIndex]
+            let rightScoreElement = rightScoreArray[rightIndex]
+            let leftUrlElement = leftAnswerArray[leftIndex]
+            let rightUrlElement = rightAnswerArray[rightIndex]
+            
+            if leftScoreElement > rightScoreElement {
+                orderedScoreArray.append(leftScoreElement)
+                orderedAnswerArray.append(leftUrlElement)
+                leftIndex += 1
+            } else if leftScoreElement < rightScoreElement {
+                orderedScoreArray.append(rightScoreElement)
+                orderedAnswerArray.append(rightUrlElement)
+                rightIndex += 1
+            } else {
+                orderedScoreArray.append(leftScoreElement)
+                orderedAnswerArray.append(leftUrlElement)
+                leftIndex += 1
+                orderedScoreArray.append(rightScoreElement)
+                orderedAnswerArray.append(rightUrlElement)
+                rightIndex += 1
+            }
+        }
+        
+        while leftIndex < leftScoreArray.count {
+            orderedScoreArray.append(leftScoreArray[leftIndex])
+            orderedAnswerArray.append(leftAnswerArray[leftIndex])
+            leftIndex += 1
+        }
+        
+        while rightIndex < rightScoreArray.count {
+            orderedScoreArray.append(rightScoreArray[rightIndex])
+            orderedAnswerArray.append(rightAnswerArray[rightIndex])
+            rightIndex += 1
+        }
+        
+        return (orderedScoreArray, orderedAnswerArray)
+        
+    }
+    
     func mergeSort(_ scoreArray: [Float], _ urlArray: [String], _ boldMatrix: [[String]]) -> ([Float], [String], [[String]]) {
+        
+        if(scoreArray.count != urlArray.count || scoreArray.count != boldMatrix.count) {
+            print("Error in MergeSort")
+            return (scoreArray, urlArray, boldMatrix)
+        }
         
         // Base Case: If array has more than 1 element, continue.
         guard scoreArray.count > 1 else { return (scoreArray, urlArray, boldMatrix) }
@@ -466,20 +548,18 @@ class ResultsVC: UIViewController {
     func extractLinks(html: String) -> [String] {
         var links: [String] = []
         if let doc = try? HTML(html: html, encoding: .utf8) {
-            let xPath = "//div[@class='hJND5c']/cite"
+            let xPath = "//a[@class='imx0m']"
             for item in doc.xpath(xPath) {
-                links.append(item.text!)
+                if(item.text == "Cached") {
+                    var link = item.toHTML!.slice(from: "https://quizlet.com/", to: "/%")
+                    if (link != nil) {
+                        link = "https://quizlet.com/" + link!
+                        links.append(link!)
+                    } else {
+                        links.append("RemoveThisLink.com")
+                    }
+                }
             }
-            // ====
-//            let testPath = "//a[@class='imx0m']"
-//            for item in doc.xpath(testPath) {
-//                if(item.text == "Cached") {
-//                    print()
-//                    let url = item.toHTML?.slice(from: "https://quizlet.com/", to: "/%")
-//                    print(url)
-//                }
-//            }
-            // ====
         }
         return links
     }
@@ -492,5 +572,8 @@ class ResultsVC: UIViewController {
         result = result.trimmingCharacters(in: .whitespacesAndNewlines)
         return result
     }
+    
+    
+    
     
 }
