@@ -114,7 +114,7 @@ class ResultsVC: UIViewController {
         html = googleSearch(question: question!)
         
         if(html == nil) {
-            print("Cannot Continue")
+            print("Cannot Continue 1")
             return ([], [])
         }
         
@@ -158,7 +158,7 @@ class ResultsVC: UIViewController {
         for i in stride(from: 0, to: searchQueries.count, by: 1) {
             html = quizletSearch(searchFor: searchQueries[i], url: urlList[i])
             if(html == nil) {
-                print("Cannot Continue")
+                print("Cannot Continue 2")
                 return ([], [])
             }
             let potentialAnswer = extractAnswer(html: html!, searchFor: searchQueries[i])
@@ -334,7 +334,7 @@ class ResultsVC: UIViewController {
     func mergeSort(_ scoreArray: [Double], _ answerArray: [String]) -> ([Double], [String]) {
         
         if(scoreArray.count != answerArray.count) {
-            print("Error in MergeSort")
+            print("Error in MergeSort 1")
             return (scoreArray, answerArray)
         }
         
@@ -405,7 +405,7 @@ class ResultsVC: UIViewController {
     func mergeSort(_ scoreArray: [Float], _ urlArray: [String], _ boldMatrix: [[String]]) -> ([Float], [String], [[String]]) {
         
         if(scoreArray.count != urlArray.count || scoreArray.count != boldMatrix.count) {
-            print("Error in MergeSort")
+            print("Error in MergeSort 2")
             return (scoreArray, urlArray, boldMatrix)
         }
         

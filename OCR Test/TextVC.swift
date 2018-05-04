@@ -12,6 +12,8 @@ class TextVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("Heere")
+        self.hideKeyboard()
     }
 
     override func didReceiveMemoryWarning() {

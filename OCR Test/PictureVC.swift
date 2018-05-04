@@ -23,6 +23,10 @@ class PictureVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var activityIndicatorBackground: UIView!
+    @IBOutlet weak var cameraButton: UIButton!
+    @IBOutlet weak var extractTextButton: UIButton!
+    @IBOutlet weak var filterButton: UIButton!
+    @IBOutlet weak var goButton: UIButton!
     
     
     // --------------------------------------------------------------
@@ -31,7 +35,8 @@ class PictureVC: UIViewController, UITextFieldDelegate {
     var context: CIContext!
     var currentFilter: CIFilter!
     var imagePicker: UIImagePickerController!
-    var recText: String = "Error"
+    var recText: String = "Default Error"
+    var currentTime: Double = 0.0
     
     
     // --------------------------------------------------------------
@@ -45,7 +50,15 @@ class PictureVC: UIViewController, UITextFieldDelegate {
         activityIndicator.isHidden = true
         activityIndicatorBackground.isHidden = true
         activityIndicatorBackground.layer.cornerRadius = 10
-        
+        textView.layer.cornerRadius = 10
+        cameraButton.layer.cornerRadius = 10
+        extractTextButton.layer.cornerRadius = 10
+        filterButton.layer.cornerRadius = 10
+        goButton.layer.cornerRadius = 10
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     override func didReceiveMemoryWarning() {
@@ -89,21 +102,26 @@ class PictureVC: UIViewController, UITextFieldDelegate {
         activityIndicatorBackground.isHidden = false
         activityIndicator.startAnimating()
         let passedImage = imageView.image
+        extractTextButton.isEnabled = false
+        textView.isEditable = false
         
-        DispatchQueue.global(qos: .background).async {
-            
-            print("This is run on the background queue")
+        let task = DispatchWorkItem {
+            //.... writing stuff in background ....
             self.recText = self.extractText(passedImage: passedImage)
             
             DispatchQueue.main.async {
-                print("This is run on the main queue, after the previous code in outer block")
+                //.... done writing stuff, updating ui ....
                 self.imageView.image = self.imageView.image?.g8_blackAndWhite()
                 self.textView.text = self.recText
                 self.activityIndicator.isHidden = true
                 self.activityIndicatorBackground.isHidden = true
+                self.extractTextButton.isEnabled = true
+                self.textView.isEditable = true
             }
         }
-
+        
+        DispatchQueue.global().async(execute: task)
+        
     }
     
     
