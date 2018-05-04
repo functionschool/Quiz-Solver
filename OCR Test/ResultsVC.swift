@@ -38,9 +38,10 @@ class ResultsVC: UIViewController {
         if(question == nil) {
             print("Using default Question")
             // question = "the main suite of protocols used on the internet is ________."
-            question = "what does API stand for"
+            // question = "what does API stand for"
             // question = "Who was the first president"
             // question = "a ________ is person who reports a business that is engaged in an illegal activity or an unethical act to a regulatory agency."
+            question = "The United States has one of the highest rate of software piracy"
         }
         
         questionLabel.text = question
@@ -92,15 +93,15 @@ class ResultsVC: UIViewController {
             print(searchQueries[i])
         }
         
-        let searchQueryScores = scoreSearchQueries(queries: searchQueries)
+        let searchQueryCoverages = scoreSearchQueries(queries: searchQueries)
         
         print()
-        for i in stride(from: 0, to: searchQueryScores.count, by: 1) {
+        for i in stride(from: 0, to: searchQueryCoverages.count, by: 1) {
             print(i, terminator:". ")
-            print(searchQueryScores[i])
+            print(searchQueryCoverages[i])
         }
         
-        var answerArray = [String]()
+        var answerArray = [String?]()
         
         for i in stride(from: 0, to: searchQueries.count, by: 1) {
             html = quizletSearch(searchFor: searchQueries[i], url: urlList[i])
@@ -109,14 +110,23 @@ class ResultsVC: UIViewController {
                 return
             }
             let potentialAnswer = extractAnswer(html: html!, searchFor: searchQueries[i])
-            answerArray.append(potentialAnswer ?? "nil")
+            answerArray.append(potentialAnswer)
         }
         
         print()
         print(answerArray)
         
+        
+        let finalResultsTuple = scoreAnswers(answers: answerArray, searchCoverage: searchQueryCoverages)
+        let topThreeAnswers: [String] = finalResultsTuple.0
+        let answerScores: [Double] = finalResultsTuple.1
+        
         print()
-        print(answerArray)
+        print("Top 3:")
+        print(topThreeAnswers)
+        print("Percentages:")
+        print(answerScores)
+        
 
     }
     
@@ -161,6 +171,64 @@ class ResultsVC: UIViewController {
         }
     }
     
+    func scoreAnswers(answers: [String?], searchCoverage: [Double]) -> ([String], [Double]) {
+        
+        var topThreeAnswers = [String]()
+        var scores = [Double]()
+        
+        for i in stride(from: 0, to: answers.count, by: 1) {
+            let score = 97.5 * searchCoverage[i]/100
+            if(answers[i] == nil) {
+                // do nothing
+            }
+            else if(topThreeAnswers.count >= 1 && topThreeAnswers[0].lowercased() == answers[i]!.lowercased()) {
+                scores[0] = scores[0] + ((100 - scores[0]) * (score/100))
+            }
+            else if(topThreeAnswers.count >= 2 && topThreeAnswers[1].lowercased() == answers[i]!.lowercased()) {
+                scores[1] = scores[1] + ((100 - scores[1]) * (score/100))
+            }
+            else if(topThreeAnswers.count >= 3 && topThreeAnswers[2].lowercased() == answers[i]!.lowercased()) {
+                scores[2] = scores[2] + ((100 - scores[2]) * (score/100))
+            }
+            else if(scores.count < 3) {
+                scores.append(score)
+                topThreeAnswers.append(answers[i]!)
+            }
+            else if(score > scores.min()!) {
+                for i in stride(from: 0, to: scores.count, by: 1) {
+                    if (scores[i] == scores.min()) {
+                        scores[i] = score
+                        topThreeAnswers[i] = answers[i]!
+                        break
+                    }
+                }
+            }
+        }
+        
+        print(scores.max()!)
+        
+        if(scores.count >= 1) {
+            let percentageAllowed = scores.max()!
+            let sum = scores.reduce(0, +)
+            let score0 = scores[0] / sum
+            scores[0] = score0 * (percentageAllowed)
+            if(scores.count >= 2) {
+                let score1 = scores[1] / sum
+                scores[1] = score1 * (percentageAllowed)
+            }
+            if(scores.count >= 3) {
+                let score2 = scores[2] / sum
+                scores[2] = score2 * (percentageAllowed)
+            }
+        }
+        
+        if(scores.count > 3 || topThreeAnswers.count > 3) {
+            print("Did something wrong. Array is longer than 3.")
+        }
+        
+        return (topThreeAnswers, scores)
+    }
+    
     func matrixToArray(matrix: [[String]]) -> [String] {
         var array = [String]()
         for i in stride(from: 0, to: matrix.count, by: 1) {
@@ -184,7 +252,7 @@ class ResultsVC: UIViewController {
         var queryScores = [Double]()
         for i in stride(from: 0, to: queries.count, by: 1) {
             let queryWordCount = Double((queries[i]?.split(separator: " ").count)!)
-            if(queries[i] == nil) {
+            if(queries[i] == nil || queries[i] == "") {
                 queryScores.append(0.0)
             } else if(questionWordCount < queryWordCount) {
                 queryScores.append(100.0)
@@ -365,10 +433,10 @@ class ResultsVC: UIViewController {
                     for pair in doc2.xpath(xPathPair) {
                         pairArray.append(pair.text!)
                     }
-                    if(pairArray[0].range(of: query) != nil) {
+                    if(pairArray[0].range(of: query) != nil && pairArray[1].last != "?") {
                         return pairArray[1]
                     }
-                    if(pairArray[1].range(of: query) != nil) {
+                    if(pairArray[1].range(of: query) != nil && pairArray[0].last != "?") {
                         return pairArray[0]
                     }
                 }
@@ -399,11 +467,19 @@ class ResultsVC: UIViewController {
         var links: [String] = []
         if let doc = try? HTML(html: html, encoding: .utf8) {
             let xPath = "//div[@class='hJND5c']/cite"
-            // For Bing:
-            // let xPath = "//div[@class='b_attribution']/cite"
             for item in doc.xpath(xPath) {
                 links.append(item.text!)
             }
+            // ====
+//            let testPath = "//a[@class='imx0m']"
+//            for item in doc.xpath(testPath) {
+//                if(item.text == "Cached") {
+//                    print()
+//                    let url = item.toHTML?.slice(from: "https://quizlet.com/", to: "/%")
+//                    print(url)
+//                }
+//            }
+            // ====
         }
         return links
     }
