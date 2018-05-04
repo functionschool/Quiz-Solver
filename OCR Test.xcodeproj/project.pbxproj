@@ -16,6 +16,7 @@
 		A5C54213206B626C00742DD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5C54211206B626C00742DD7 /* Main.storyboard */; };
 		A5C54215206B626C00742DD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5C54214206B626C00742DD7 /* Assets.xcassets */; };
 		A5C54218206B626C00742DD7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A5C54216206B626C00742DD7 /* LaunchScreen.storyboard */; };
+		A5D15C09209C305200241CF9 /* TextVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D15C08209C305200241CF9 /* TextVC.swift */; };
 		B1BEB1029BDAD3C54608AB87 /* Pods_OCR_Test.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44A27C042EC3C01BEDE9EAF9 /* Pods_OCR_Test.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		A5C54214206B626C00742DD7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A5C54217206B626C00742DD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A5C54219206B626C00742DD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A5D15C08209C305200241CF9 /* TextVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextVC.swift; sourceTree = "<group>"; };
 		E606A305F2A7E6DB9DED19BF /* Pods-OCR Test.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OCR Test.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OCR Test/Pods-OCR Test.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,6 +81,7 @@
 			children = (
 				A5C5420D206B626C00742DD7 /* AppDelegate.swift */,
 				A5C5420F206B626C00742DD7 /* PictureVC.swift */,
+				A5D15C08209C305200241CF9 /* TextVC.swift */,
 				A509E6502089E8B5002AC23D /* ResultsVC.swift */,
 				A506F32A208AB1A500D62BBB /* StringExtension.swift */,
 				A509E64E2089E681002AC23D /* UIImageExtension.swift */,
@@ -239,6 +242,7 @@
 				A506F32B208AB1A500D62BBB /* StringExtension.swift in Sources */,
 				A509E64F2089E681002AC23D /* UIImageExtension.swift in Sources */,
 				A509E6512089E8B5002AC23D /* ResultsVC.swift in Sources */,
+				A5D15C09209C305200241CF9 /* TextVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

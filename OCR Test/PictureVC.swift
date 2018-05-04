@@ -13,7 +13,7 @@ import TesseractOCR
 import UIKit
 
 
-class PictureVC: UIViewController {
+class PictureVC: UIViewController, UITextFieldDelegate {
     
 
     // --------------------------------------------------------------
@@ -21,7 +21,9 @@ class PictureVC: UIViewController {
     // --------------------------------------------------------------
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textView: UITextView!
-
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var activityIndicatorBackground: UIView!
+    
     
     // --------------------------------------------------------------
     // MARK:- Variables
@@ -40,6 +42,10 @@ class PictureVC: UIViewController {
         imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imageView.image = imageView.image?.fixOrientation()
+        activityIndicator.isHidden = true
+        activityIndicatorBackground.isHidden = true
+        activityIndicatorBackground.layer.cornerRadius = 10
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -78,8 +84,26 @@ class PictureVC: UIViewController {
     }
     
     @IBAction func readButtonPressed(_ sender: Any) {
-        recText = extractText()
-        textView.text = recText
+        
+        activityIndicator.isHidden = false
+        activityIndicatorBackground.isHidden = false
+        activityIndicator.startAnimating()
+        let passedImage = imageView.image
+        
+        DispatchQueue.global(qos: .background).async {
+            
+            print("This is run on the background queue")
+            self.recText = self.extractText(passedImage: passedImage)
+            
+            DispatchQueue.main.async {
+                print("This is run on the main queue, after the previous code in outer block")
+                self.imageView.image = self.imageView.image?.g8_blackAndWhite()
+                self.textView.text = self.recText
+                self.activityIndicator.isHidden = true
+                self.activityIndicatorBackground.isHidden = true
+            }
+        }
+
     }
     
     
@@ -208,13 +232,14 @@ extension PictureVC {
 // --------------------------------------------------------------
 extension PictureVC: G8TesseractDelegate {
 
-    func extractText() -> String {
-        var picture = imageView.image
-        picture = picture?.g8_blackAndWhite()
-        imageView.image = picture
+    func extractText(passedImage: UIImage?) -> String {
+        if(passedImage == nil) {
+            print("Image was nil")
+            return ""
+        }
         if let tesseract = G8Tesseract(language: "eng") {
             tesseract.delegate = self
-            tesseract.image = imageView.image
+            tesseract.image = passedImage
             tesseract.recognize()
             print(tesseract.recognizedText)
             return tesseract.recognizedText

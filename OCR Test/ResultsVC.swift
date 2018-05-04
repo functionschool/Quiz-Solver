@@ -22,6 +22,8 @@ class ResultsVC: UIViewController {
     @IBOutlet weak var answer1: UILabel!
     @IBOutlet weak var answer2: UILabel!
     @IBOutlet weak var answer3: UILabel!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var activityIndicatorBackground: UIView!
     
     
     // --------------------------------------------------------------
@@ -42,6 +44,7 @@ class ResultsVC: UIViewController {
         answer1.isHidden = true
         answer2.isHidden = true
         answer3.isHidden = true
+        activityIndicatorBackground.layer.cornerRadius = 10
         
         if(question == nil) {
             print("Using default Question")
@@ -53,6 +56,7 @@ class ResultsVC: UIViewController {
         }
         
         questionLabel.text = question
+        activityIndicator.startAnimating()
         
         DispatchQueue.global(qos: .background).async {
             
@@ -64,6 +68,8 @@ class ResultsVC: UIViewController {
             percentages = solvedTuple.1
             
             DispatchQueue.main.async {
+                self.activityIndicator.isHidden = true
+                self.activityIndicatorBackground.isHidden = true
                 print("This is run on the main queue, after the previous code in outer block")
                 if(topAnswers.count >= 1) {
                     self.answerTitle1.isHidden = false
